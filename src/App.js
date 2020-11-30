@@ -1,25 +1,62 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, NavLink } from "react-router-dom";
+
+import Nav from "./components/nav/Nav";
+import Public from "./components/public/Public";
+import PrivatePage from "./components/privatePage/PrivagePage";
+
+export default class App extends Component {
+  state = {
+    isAuth: false,
+    message: "",
+  };
+
+  handleOnSignIn = () => {
+    this.setState({
+      isAuth: true,
+      message: "you are signed in.",
+    });
+  };
+
+  logOut = () => {
+    this.setState({
+      isAuth: false,
+      message: "you are not signed in.",
+    });
+  };
+  render() {
+    return (
+      <div>
+        <Router>
+          <Nav isAuth={this.state.isAuth} logOut={this.logOut} />
+
+          <Switch>
+            <Route exact path="/"></Route>
+
+            <Route
+              exact
+              path="/public"
+              component={Public}
+              isAuth={this.state.isAuth}
+            />
+            <Route
+              exact
+              path="/private"
+              isAuth={this.state.isAuth}
+              component={(props) => (
+                <PrivatePage
+                  // {...props}
+                  isAuth={this.state.isAuth}
+                  handleOnSignIn={this.handleOnSignIn}
+                  logOut={this.logOut}
+                />
+              )}
+            />
+          </Switch>
+        </Router>
+      </div>
+    );
+  }
 }
-
-export default App;
